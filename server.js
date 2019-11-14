@@ -24,24 +24,25 @@ app.delete("/api/notes/:id", function (req, res) {
     const chosen = req.params.id
     readFile("./Develop/db/db.json", "utf8")
         .then(data => {
+            arrayDataBase.forEach(element => {
+                const { id } = element
+                if (id === chosen) {
+                    arrayDataBase.splice(element, 1)
+                }
+            })
             const newData = JSON.parse(data)
             return newData.filter(element => {
                 const { id } = element
-                console.log(id)
-                console.log(chosen)
                 return id !== chosen
             })
-
         })
         .then(data => {
             writeFile("./Develop/db/db.json", JSON.stringify(data, null, 2))
-
         })
-        .then(data => res.json(JSON.parse(data)))
         .then(data => {
             readFile("./Develop/db/db.json", "utf8")
                 .then(data => {
-                    res.json(JSON.parse(data))
+                    res.json(data)
                 })
         })
         .catch(err => {
@@ -55,7 +56,6 @@ app.post("/api/notes", function (req, res) {
     arrayDataBase.push(note)
     fs.writeFile("./Develop/db/db.json", JSON.stringify(arrayDataBase, null, 2), function (err, data) {
     })
-    console.log(arrayDataBase)
     res.json(note)
 })
 
